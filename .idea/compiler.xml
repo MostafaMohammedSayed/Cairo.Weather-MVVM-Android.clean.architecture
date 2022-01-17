@@ -3,6 +3,8 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.7">
       <module name="Cairo_Weather-MVVM-Android_clean_architecture.app" target="11" />
+      <module name="Cairo_Weather-MVVM-Android_clean_architecture.mobileui" target="11" />
+      <module name="Cairo_Weather-MVVM-Android_clean_architecture.Presentation" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

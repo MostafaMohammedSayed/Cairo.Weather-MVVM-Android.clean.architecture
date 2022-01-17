@@ -1,0 +1,78 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-android-extensions'
+    id 'com.google.secrets_gradle_plugin' version '0.4'
+}
+
+android {
+    def globalConfiguration = rootProject.extensions.getByName("ext")
+
+
+    compileSdk globalConfiguration["androidCompileSdk"]
+
+    defaultConfig {
+        minSdk globalConfiguration["androidMinSdk"]
+        targetSdk globalConfiguration["androidTargetSdk"]
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    def mobileUiDependencies = rootProject.ext.mobileUiDependencies
+    def mobileUiTestDependencies = rootProject.ext.mobileUiTestDependencies
+
+    implementation project(':Domain')
+    implementation project(':Data')
+    implementation project(':Remote')
+    implementation project(':Presentation')
+
+
+
+    implementation mobileUiDependencies.coreKtx
+    implementation mobileUiDependencies.rxKotlin
+    implementation mobileUiDependencies.rxandroid
+    implementation mobileUiDependencies.koin
+    implementation mobileUiDependencies.koinViewModel
+    implementation mobileUiDependencies.viewModel
+    implementation mobileUiDependencies.liveData
+    implementation mobileUiDependencies.appCompat
+    implementation mobileUiDependencies.material
+    implementation mobileUiDependencies.constraintLayout
+    implementation mobileUiDependencies.retrofit
+    implementation mobileUiDependencies.converterGson
+    implementation mobileUiDependencies.adapterRxjava
+    implementation mobileUiDependencies.recyclerview
+    implementation mobileUiDependencies.fragmentKtx
+    implementation mobileUiDependencies.navigationFragment
+    implementation mobileUiDependencies.navigationUi
+
+    testImplementation mobileUiTestDependencies.junit
+    testImplementation mobileUiTestDependencies.androidxJunit
+    testImplementation mobileUiTestDependencies.mockito
+    testImplementation mobileUiTestDependencies.robolecreic
+
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+}

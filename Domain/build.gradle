@@ -15,6 +15,5 @@ dependencies{
     implementation domainDependencies.rxKotlin
 
     testImplementation domainTestDependencies.junit
-    testImplementation domainTestDependencies.androidxJunit
     testImplementation domainTestDependencies.espresso
 }

@@ -7,5 +7,8 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Cairo Weather-MVVM-Android clean architecture"
-include ':app'
 include ':Domain'
+include ':Data'
+include ':Remote'
+include ':Presentation'
+include ':mobileui'

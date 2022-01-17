@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Mobile UI</string>
+
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="cairo_s_weather_forecast_for_5_days">Cairo\'s weather forecast for the next 5 days:</string>
+    <string name="date">Date: </string>
+    <string name="temp">Temp: </string>
+    <string name="temp_value">23ْ c </string>
+    <string name="temp_min">Temp min: </string>
+    <string name="temp_max">"Temp max: "</string>
+    <string name="press">"Press: "</string>
+    <string name="error_loading_forecast_data">Error loading forecast data</string>
+</resources>

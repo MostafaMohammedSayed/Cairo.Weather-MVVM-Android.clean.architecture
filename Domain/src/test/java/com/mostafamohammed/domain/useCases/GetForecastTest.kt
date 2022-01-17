@@ -17,6 +17,7 @@ class GetForecastTest {
     private lateinit var rawWeather: RawWeather
     private lateinit var fakeForecastRepo: FakeWeatherForecastRepository
     private lateinit var thread: PostExecutionThread
+    private lateinit var getForecast: GetForecast
 
     @Before
     fun setUp() {
@@ -39,13 +40,13 @@ class GetForecastTest {
             override val scheduler: Scheduler
                 get() = Schedulers.io()
         }
+        getForecast = GetForecast(fakeForecastRepo, thread)
     }
 
-    @Test()
+    @Test
     fun buildUseCaseObservable_ExceptionThrowing() {
 
         //GIVEN an instance of test subject GetForecast
-        val getForecast = GetForecast(fakeForecastRepo, thread)
 
         //WHEN PARAMS = NULL
         val params = null
@@ -56,11 +57,10 @@ class GetForecastTest {
         }
     }
 
-    @Test()
+    @Test
     fun buildUseCaseObservable_Completes() {
 
         //GIVEN an instance of test subject GetForecast
-        val getForecast = GetForecast(fakeForecastRepo, thread)
 
         //WHEN PARAMS are provided
         val params = GetForecast.Params("metric", "apiKey")
@@ -70,11 +70,10 @@ class GetForecastTest {
         testObserver.assertComplete()
     }
 
-    @Test()
+    @Test
     fun buildUseCaseObservable_valueAsExpected() {
 
         //GIVEN an instance of test subject GetForecast
-        val getForecast = GetForecast(fakeForecastRepo, thread)
 
         //WHEN PARAMS are provided
         val params = GetForecast.Params("metric", "apiKey")

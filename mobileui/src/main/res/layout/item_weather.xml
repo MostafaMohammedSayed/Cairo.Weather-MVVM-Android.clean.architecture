@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="@dimen/default_layout_margin">
+    <TextView
+        android:id="@+id/tvDateLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/date"
+        tools:text="@string/date"
+        android:textColor="@color/black"
+        android:layout_marginEnd="@dimen/default_layout_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="07-01-2022"
+        android:textColor="@color/black"
+        android:layout_marginStart="@dimen/default_layout_margin"
+        android:layout_marginBottom="@dimen/default_layout_margin"
+        app:layout_constraintStart_toEndOf="@id/tvDateLabel"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/tvTempLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/temp"
+        tools:text="@string/temp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvDateLabel" />
+
+    <TextView
+        android:id="@+id/tvTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/temp_value"
+        android:textColor="@color/black"
+        android:layout_marginStart="@dimen/default_layout_margin"
+        android:layout_marginBottom="@dimen/default_layout_margin"
+        app:layout_constraintStart_toEndOf="@id/tvTempLabel"
+        app:layout_constraintTop_toBottomOf="@id/tvDate" />
+    <TextView
+        android:id="@+id/tvTempMinLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/temp_min"
+        tools:text="@string/temp_min"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTempLabel" />
+
+    <TextView
+        android:id="@+id/tvTempMin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/temp_value"
+        android:textColor="@color/black"
+        android:layout_marginStart="@dimen/default_layout_margin"
+        android:layout_marginBottom="@dimen/default_layout_margin"
+        app:layout_constraintStart_toEndOf="@id/tvTempMinLabel"
+        app:layout_constraintTop_toBottomOf="@id/tvTemp" />
+    <TextView
+        android:id="@+id/tvTempMaxLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/temp_max"
+        tools:text="@string/temp_max"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTempMinLabel" />
+
+    <TextView
+        android:id="@+id/tvTempMax"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/temp_value"
+        android:textColor="@color/black"
+        android:layout_marginStart="@dimen/default_layout_margin"
+        android:layout_marginBottom="@dimen/default_layout_margin"
+        app:layout_constraintStart_toEndOf="@id/tvTempMaxLabel"
+        app:layout_constraintTop_toBottomOf="@id/tvTempMin" />
+    <TextView
+        android:id="@+id/tvPressLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/press"
+        tools:text="@string/press"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTempMaxLabel" />
+
+    <TextView
+        android:id="@+id/tvPress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/temp_value"
+        android:textColor="@color/black"
+        android:layout_marginStart="@dimen/default_layout_margin"
+        android:layout_marginBottom="@dimen/default_layout_margin"
+        app:layout_constraintStart_toEndOf="@id/tvPressLabel"
+        app:layout_constraintTop_toBottomOf="@id/tvTempMax" />
+
+    <ImageView
+        android:id="@+id/tempIcon"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginRight="@dimen/default_layout_margin"
+        android:src="@drawable/ic_baseline_wb_sunny_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
