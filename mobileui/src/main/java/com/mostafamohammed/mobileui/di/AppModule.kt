@@ -4,7 +4,7 @@ package com.mostafamohammed.mobileui.di
 import com.mostafamohammed.data.mapper.ForecastAttributesMapper
 import com.mostafamohammed.data.mapper.RawWeatherMapper
 import com.mostafamohammed.data.mapper.TimedForecastMapper
-import com.mostafamohammed.data.sources.RawWeatherDataSource
+import com.mostafamohammed.data.sources.RawWeatherRepository
 import com.mostafamohammed.data.sources.RawWeatherRemoteDataSource
 import com.mostafamohammed.domain.executer.PostExecutionThread
 import com.mostafamohammed.domain.repository.WeatherForecastRepository
@@ -65,7 +65,7 @@ fun provideTimedForecastViewMapper(forecastAttributesViewMapper: ForecastAttribu
 fun provideRawWeatherDataSource(
     rawWeatherMapper: RawWeatherMapper,
     rawWeatherRemoteDataSource: RawWeatherRemoteDataSource
-): RawWeatherDataSource = RawWeatherDataSource(
+): RawWeatherRepository = RawWeatherRepository(
     rawWeatherMapper, rawWeatherRemoteDataSource
 )
 

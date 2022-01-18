@@ -10,7 +10,7 @@ import io.reactivex.rxjava3.core.Observable
 *if the app has a cache layer another constructor parameter will be added and i will be
 *a factory class that provides cache data source or remote data source
 */
-class RawWeatherDataSource(
+class RawWeatherRepository(
     private val mapper: RawWeatherMapper,
     private val rawWeatherRemoteDataSource: RawWeatherRemoteDataSource
 ) :

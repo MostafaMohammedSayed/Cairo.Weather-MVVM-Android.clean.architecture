@@ -1,79 +1,87 @@
 package com.mostafamohammed.data.mapper
 
+import com.mostafamohammed.data.ModelFactory
 import com.mostafamohammed.data.models.ForecastAttributesEntity
 import com.mostafamohammed.data.models.TimedForecastEntity
 import com.mostafamohammed.domain.models.ForecastAttributes
 import com.mostafamohammed.domain.models.TimedForecast
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
+import org.mockito.Mock
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
+@RunWith(JUnit4::class)
 class TimedForecastMapperTest {
-    private lateinit var mapper: TimedForecastMapper
-    private lateinit var entityModel: TimedForecastEntity
-    private lateinit var domainModel: TimedForecast
+
+    @Mock
+    private lateinit var forecastAttrsMapper: ForecastAttributesMapper
+
+    lateinit var mapper: TimedForecastMapper
 
     @Before
     fun setUp() {
-        mapper = TimedForecastMapper(ForecastAttributesMapper())
+        forecastAttrsMapper = mock()
+        mapper = TimedForecastMapper(forecastAttrsMapper)
+    }
 
-        entityModel =
-            TimedForecastEntity(
-                attrs = ForecastAttributesEntity(
-                    temp = 25.0,
-                    tempMax = 27.0,
-                    tempMin = 23.0,
-                    pressure = 1000.1
-                ),
-                date = "25-12-1956"
+    private fun stubForecastAttributesMapperMapToEntity(model: ForecastAttributes) {
+        whenever(forecastAttrsMapper.mapToEntity(model))
+            .thenReturn(
+                ForecastAttributesEntity(
+                    temp = model.temp,
+                    tempMin = model.tempMin,
+                    tempMax = model.tempMax,
+                    pressure = model.pressure
+                )
             )
+    }
 
-        domainModel =
-            TimedForecast(
-                attrs = ForecastAttributes(
-                    temp = 25.0,
-                    tempMax = 27.0,
-                    tempMin = 23.0,
-                    pressure = 1000.1
-                ),
-                date = "25-12-1956"
+    private fun stubForecastAttributesMapperMapFromEntity(entity: ForecastAttributesEntity) {
+        whenever(forecastAttrsMapper.mapFromEntity(entity))
+            .thenReturn(
+                ForecastAttributes(
+                    temp = entity.temp,
+                    tempMin = entity.tempMin,
+                    tempMax = entity.tempMax,
+                    pressure = entity.pressure
+                )
             )
-
     }
 
     @Test
     fun mapFromEntityMapsData() {
-        val resultModel = mapper.mapFromEntity(entityModel)
-        assertEqualData(entityModel, resultModel)
+        val entities = ModelFactory.makeTimedForecastsEntity()
+        entities.forEach { entity ->
+            stubForecastAttributesMapperMapFromEntity(entity.attrs)
+        }
+        val models = entities.map { entitiesToMap ->
+            mapper.mapFromEntity(entitiesToMap)
+        }
+        assertEqualData(entities, models)
     }
 
     @Test
     fun mapToEntityMapsData() {
-        val resultModel = mapper.mapToEntity(domainModel)
-        assertEqualData(resultModel, domainModel)
+        val models = ModelFactory.makeTimedForecasts()
+        models.forEach { model ->
+            stubForecastAttributesMapperMapToEntity(model.attrs)
+        }
+        val entities = models.map { modelsToMap ->
+            mapper.mapToEntity(modelsToMap)
+        }
+        assertEqualData(entities, models)
     }
 
-    private fun assertEqualData(entity: TimedForecastEntity, model: TimedForecast) {
-        Assert.assertEquals(entity.date, model.date)
-        Assert.assertEquals(
-            25.0,
-            entity.attrs.temp,
-            model.attrs.temp
-        )
-        Assert.assertEquals(
-            23.0,
-            entity.attrs.tempMin,
-            model.attrs.tempMin
-        )
-        Assert.assertEquals(
-            27.0,
-            entity.attrs.tempMax,
-            model.attrs.tempMax
-        )
-        Assert.assertEquals(
-            1000.1,
-            entity.attrs.pressure,
-            model.attrs.pressure
-        )
+    private fun assertEqualData(entities: List<TimedForecastEntity>, models: List<TimedForecast>) {
+        for (i in entities.indices) {
+            assert(entities[i].date == models[i].date)
+            assert(entities[i].attrs.temp == models[i].attrs.temp)
+            assert(entities[i].attrs.tempMin == models[i].attrs.tempMin)
+            assert(entities[i].attrs.tempMax == models[i].attrs.tempMax)
+            assert(entities[i].attrs.pressure == models[i].attrs.pressure)
+        }
     }
 }

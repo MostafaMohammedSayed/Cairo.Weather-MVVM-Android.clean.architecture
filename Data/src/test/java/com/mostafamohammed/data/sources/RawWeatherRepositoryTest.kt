@@ -14,9 +14,9 @@ import io.reactivex.rxjava3.core.Observable
 import org.junit.Before
 import org.junit.Test
 
-class RawWeatherDataSourceTest {
+class RawWeatherRepositoryTest {
     private lateinit var entity: RawWeatherEntity
-    private lateinit var rawWeatherDataSource: RawWeatherDataSource
+    private lateinit var rawWeatherRepository: RawWeatherRepository
     private lateinit var rawWeatherRemoteDataSource: RawWeatherRemoteDataSource
     private lateinit var rawWeatherRemote: RawWeatherRemote
     private lateinit var mapper: RawWeatherMapper
@@ -46,7 +46,7 @@ class RawWeatherDataSourceTest {
         }
         rawWeatherRemoteDataSource = RawWeatherRemoteDataSource(rawWeatherRemote)
         mapper = RawWeatherMapper(TimedForecastMapper(ForecastAttributesMapper()))
-        rawWeatherDataSource = RawWeatherDataSource(mapper, rawWeatherRemoteDataSource)
+        rawWeatherRepository = RawWeatherRepository(mapper, rawWeatherRemoteDataSource)
 
         domain = RawWeather(
             timedForecasts = listOf(
@@ -65,13 +65,13 @@ class RawWeatherDataSourceTest {
 
     @Test
     fun getForecastCompletes() {
-        val testObservable = rawWeatherDataSource.getForecast("units", "apiKey").test()
+        val testObservable = rawWeatherRepository.getForecast("units", "apiKey").test()
         testObservable.assertComplete()
     }
 
     @Test
     fun getForecastReturnsData() {
-        val testObservable = rawWeatherDataSource.getForecast("units", "apiKey").test()
+        val testObservable = rawWeatherRepository.getForecast("units", "apiKey").test()
         testObservable.assertValue(domain)
     }
 }

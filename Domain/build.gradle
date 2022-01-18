@@ -15,5 +15,9 @@ dependencies{
     implementation domainDependencies.rxKotlin
 
     testImplementation domainTestDependencies.junit
+    testImplementation domainTestDependencies.mockito
+    testImplementation "org.mockito:mockito-inline:2.8.47"
+    //    testImplementation domainTestDependencies.mockitoInline
+
     testImplementation domainTestDependencies.espresso
 }

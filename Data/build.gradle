@@ -19,5 +19,7 @@ dependencies{
     testImplementation dataTestDependencies.junit
     testImplementation dataTestDependencies.androidxJunit
     testImplementation dataTestDependencies.espresso
+    testImplementation dataTestDependencies.mockito
+    testImplementation "org.mockito:mockito-inline:2.8.47"
     //testImplementation dataTestDependencies.robolectric
 }

@@ -74,7 +74,7 @@ ext {
             roomCompiler         : '2.3.0',
             robolectric          : '4.6',
             mockito              : '4.0.0',
-            mockitoInline        : '4.2.0',
+            mockitoInline        : '2.8.47',
             mockitoDexMaker      : '1.5.1',
             mockitoDexMakerInline: '2.28.0'
     ]
@@ -119,7 +119,8 @@ ext {
             roomCompiler              : "androidx.room:room-compiler:${libVersion.roomKtx}",
             shimmer                   : "com.facebook.shimmer:shimmer:${libVersion.shimmer}",
             robolectric               : "org.robolectric:robolectric:${libVersion.robolectric}",
-            mockito                   : "org.mockito:mockito-core:${libVersion.mockito}",
+            mockito                   : "org.mockito.kotlin:mockito-kotlin:${libVersion.mockito}",
+            mockitoCore               : "org.mockito:mockito-core:${libVersion.mockito}",
             mockitoInline             : "org.mockito:mockito-inline: ${libVersion.mockitoInline}",
             mockitoDexMakerInline     : "com.linkedin.dexmaker:dexmaker-mockito-inline-extended:${libVersion.mockitoDexMakerInline}",
             mockitoDexMaker           : "com.linkedin.dexmaker:dexmaker-mockito:${libVersion.mockitoDexMaker}"
@@ -133,7 +134,9 @@ ext {
     domainTestDependencies = [
             junit        : "junit:junit:${libVersion.test.junit}",
             androidxJunit: "androidx.test.ext:junit:${libVersion.androidTest.androidxJunit}",
-            espresso     : "androidx.test.espresso:espresso-core:${libVersion.androidTest.espresso}"
+            espresso     : "androidx.test.espresso:espresso-core:${libVersion.androidTest.espresso}",
+            mockito      : "org.mockito.kotlin:mockito-kotlin:${libVersion.mockito}",
+            mockitoInline: "org.mockito:mockito-inline: ${libVersion.mockitoInline}"
     ]
 
     dataDependencies = [
@@ -144,6 +147,8 @@ ext {
             junit        : "junit:junit:${libVersion.test.junit}",
             androidxJunit: "androidx.test.ext:junit:${libVersion.androidTest.androidxJunit}",
             espresso     : "androidx.test.espresso:espresso-core:${libVersion.androidTest.espresso}",
+            mockito      : "org.mockito.kotlin:mockito-kotlin:${libVersion.mockito}",
+            mockitoInline: "org.mockito:mockito-inline: ${libVersion.mockitoInline}",
             robolectric  : "org.robolectric:robolectric:${libVersion.robolectric}"
     ]
 
