@@ -5,7 +5,6 @@ import com.mostafamohammed.data.repository.RawWeatherRemote
 import com.mostafamohammed.remote.apiService.ApiService
 import com.mostafamohammed.remote.mappers.RawWeatherModelMapper
 import io.reactivex.rxjava3.core.Observable
-import java.util.logging.Logger
 
 class RawWeatherRemoteImpl(
     private val service: ApiService,

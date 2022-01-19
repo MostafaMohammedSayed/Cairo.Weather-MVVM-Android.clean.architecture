@@ -35,10 +35,23 @@ class HomeViewModel(
 
     }
 
+    val observer = object: DisposableObserver<RawWeather>(){
+        override fun onNext(weather: RawWeather) {
+            forecastLiveData.postValue(Resource.success(mapper.mapToView(weather)))
+        }
+
+        override fun onError(throwable: Throwable) {
+            forecastLiveData.postValue(Resource.error(throwable))
+        }
+
+        override fun onComplete() {}
+
+    }
+
     fun fetchForecast(unit: String, apiKey: String) {
         forecastLiveData.postValue(Resource.loading())
         val params = GetForecast.Params.createParams(unit, apiKey)
-        return getForecast.execute(ForecastSubscriber(), params)
+        return getForecast.execute(observer, params)
     }
 
     fun observeWeather(owner: LifecycleOwner, observer: Observer<Resource<RawWeatherView>>) {

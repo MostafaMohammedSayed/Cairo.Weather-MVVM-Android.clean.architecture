@@ -4,88 +4,88 @@ import com.mostafamohammed.data.models.ForecastAttributesEntity
 import com.mostafamohammed.data.models.RawWeatherEntity
 import com.mostafamohammed.data.models.TimedForecastEntity
 import com.mostafamohammed.remote.apiService.ApiService
-import com.mostafamohammed.remote.mappers.ForecastAttributesModelMapper
 import com.mostafamohammed.remote.mappers.RawWeatherModelMapper
-import com.mostafamohammed.remote.mappers.TimedForecastModelMapper
-import com.mostafamohammed.remote.models.ForecastAttributesModel
 import com.mostafamohammed.remote.models.RawWeatherModel
-import com.mostafamohammed.remote.models.TimedForecastModel
 import io.reactivex.rxjava3.core.Observable
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.mock
+import org.mockito.Mock
 import org.mockito.Mockito.verify
+import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.whenever
 
 class RawWeatherRemoteImplTest {
 
     private lateinit var rawWeatherRemoteImpl: RawWeatherRemoteImpl
+    @Mock
+    private lateinit var service: ApiService
+    @Mock
     private lateinit var mapper: RawWeatherModelMapper
-    private lateinit var apiService: ApiService
-    private lateinit var remoteModel: RawWeatherModel
-    private lateinit var entityModel: RawWeatherEntity
-    private lateinit var weatherService: WeatherService
-
-    val service = mock(WeatherService::class.java)
-
 
     @Before
     fun setUp() {
-        remoteModel = RawWeatherModel(
-            timedForecasts = listOf(
-                TimedForecastModel(
-                    attrs = ForecastAttributesModel(
-                        temp = 25.0,
-                        tempMax = 27.0,
-                        tempMin = 23.0,
-                        pressure = 1000.1
-                    ),
-                    date = "25-12-1956"
-                )
-            )
-        )
+        MockitoAnnotations.openMocks(this)
+        rawWeatherRemoteImpl = RawWeatherRemoteImpl(service, mapper)
+    }
 
-        apiService = object : ApiService {
-            override fun getWeather(units: String, appid: String): Observable<RawWeatherModel> {
-                return Observable.just(remoteModel)
-            }
+    fun stubServiceGetWeather(units: String, apiKey: String, model: RawWeatherModel) {
+        whenever(service.getWeather(units, apiKey))
+            .thenReturn(Observable.just(model))
+    }
 
-        }
-        mapper = RawWeatherModelMapper(TimedForecastModelMapper(ForecastAttributesModelMapper()))
-        rawWeatherRemoteImpl = RawWeatherRemoteImpl(apiService, mapper)
-
-        entityModel = RawWeatherEntity(
-            timedForecasts = listOf(
-                TimedForecastEntity(
-                    attrs = ForecastAttributesEntity(
-                        temp = 25.0,
-                        tempMax = 27.0,
-                        tempMin = 23.0,
-                        pressure = 1000.1
-                    ),
-                    date = "25-12-1956"
-                )
-            )
-        )
-
-        weatherService = WeatherService()
+    fun stubMapperMapFromModel(model: RawWeatherModel) {
+        whenever(mapper.mapFromModel(model))
+            .thenReturn(RawWeatherEntity(
+                timedForecasts = model.timedForecasts.map { timedForecastModel ->
+                    TimedForecastEntity(
+                        attrs = ForecastAttributesEntity(
+                            temp = timedForecastModel.attrs.temp,
+                            tempMin = timedForecastModel.attrs.tempMin,
+                            tempMax = timedForecastModel.attrs.tempMax,
+                            pressure = timedForecastModel.attrs.pressure,
+                        ),
+                        date = timedForecastModel.date
+                    )
+                }
+            ))
     }
 
     @Test
     fun getForecastCompletes() {
-        val testObserver = rawWeatherRemoteImpl.getForecast("units", "apiKey").test()
+        val model = RemoteLayerModelFactory.makeRawWeatherModel()
+        stubServiceGetWeather("metric", "apiKey", model)
+        stubMapperMapFromModel(model)
+        val testObserver = rawWeatherRemoteImpl.getForecast("metric", "apiKey").test()
         testObserver.assertComplete()
     }
 
     @Test
     fun getForecastReturnsData() {
-        val testObserver = rawWeatherRemoteImpl.getForecast("units", "apiKey").test()
-        testObserver.assertValue(entityModel)
+        val model = RemoteLayerModelFactory.makeRawWeatherModel()
+        val entity = RawWeatherEntity(
+            timedForecasts = model.timedForecasts.map { timedForecastModel ->
+                TimedForecastEntity(
+                    attrs = ForecastAttributesEntity(
+                        temp = timedForecastModel.attrs.temp,
+                        tempMin = timedForecastModel.attrs.tempMin,
+                        tempMax = timedForecastModel.attrs.tempMax,
+                        pressure = timedForecastModel.attrs.pressure,
+                    ),
+                    date = timedForecastModel.date
+                )
+            })
+        stubServiceGetWeather("metric", "apiKey", model)
+        stubMapperMapFromModel(model)
+        val testObserver = rawWeatherRemoteImpl.getForecast("metric", "apiKey").test()
+        testObserver.assertValue(entity)
     }
 
     @Test
     fun getForecastCallsServer() {
-        rawWeatherRemoteImpl.getForecast("units", "apiKey").test()
-        verify(service).weatherApi.getWeather("units", "apiKey")
+        val model = RemoteLayerModelFactory.makeRawWeatherModel()
+        stubServiceGetWeather("metric", "apiKey", model)
+        stubMapperMapFromModel(model)
+        rawWeatherRemoteImpl.getForecast("metric", "apiKey").test()
+        verify(service).getWeather("metric", "apiKey")
     }
-
 }

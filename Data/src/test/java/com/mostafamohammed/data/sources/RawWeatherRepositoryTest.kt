@@ -1,77 +1,60 @@
 package com.mostafamohammed.data.sources
 
-import com.mostafamohammed.data.mapper.ForecastAttributesMapper
+import com.mostafamohammed.data.ModelFactory
 import com.mostafamohammed.data.mapper.RawWeatherMapper
-import com.mostafamohammed.data.mapper.TimedForecastMapper
-import com.mostafamohammed.data.models.ForecastAttributesEntity
 import com.mostafamohammed.data.models.RawWeatherEntity
-import com.mostafamohammed.data.models.TimedForecastEntity
-import com.mostafamohammed.data.repository.RawWeatherRemote
-import com.mostafamohammed.domain.models.ForecastAttributes
-import com.mostafamohammed.domain.models.RawWeather
-import com.mostafamohammed.domain.models.TimedForecast
 import io.reactivex.rxjava3.core.Observable
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.whenever
 
 class RawWeatherRepositoryTest {
-    private lateinit var entity: RawWeatherEntity
     private lateinit var rawWeatherRepository: RawWeatherRepository
+
+    @Mock
     private lateinit var rawWeatherRemoteDataSource: RawWeatherRemoteDataSource
-    private lateinit var rawWeatherRemote: RawWeatherRemote
+    @Mock
     private lateinit var mapper: RawWeatherMapper
-    private lateinit var domain: RawWeather
 
     @Before
     fun setUp() {
-        entity = RawWeatherEntity(
-            timedForecasts = listOf(
-                TimedForecastEntity(
-                    attrs = ForecastAttributesEntity(
-                        temp = 25.0,
-                        tempMax = 27.0,
-                        tempMin = 23.0,
-                        pressure = 1000.1
-                    ),
-                    date = "25-12-1956"
-                )
-            )
-        )
-        rawWeatherRemote = object : RawWeatherRemote {
-            override fun getForecast(units: String, apiKey: String): Observable<RawWeatherEntity> {
-
-                return Observable.just(entity)
-            }
-
-        }
-        rawWeatherRemoteDataSource = RawWeatherRemoteDataSource(rawWeatherRemote)
-        mapper = RawWeatherMapper(TimedForecastMapper(ForecastAttributesMapper()))
+        MockitoAnnotations.openMocks(this)
         rawWeatherRepository = RawWeatherRepository(mapper, rawWeatherRemoteDataSource)
+    }
 
-        domain = RawWeather(
-            timedForecasts = listOf(
-                TimedForecast(
-                    attrs = ForecastAttributes(
-                        temp = 25.0,
-                        tempMax = 27.0,
-                        tempMin = 23.0,
-                        pressure = 1000.1
-                    ),
-                    date = "25-12-1956"
-                )
-            )
-        )
+    private fun stubRawWeatherRemoteDataSourceGetForecast(
+        units: String = "metric",
+        apikey: String = "apiKey",
+        entity: RawWeatherEntity
+    ) {
+        whenever(rawWeatherRemoteDataSource.getForecast(units, apikey))
+            .thenReturn(Observable.just(entity))
+    }
+
+    private fun stubRawWeatherMapperMapFromEntity(entity: RawWeatherEntity) {
+        whenever(mapper.mapFromEntity(entity))
+            .thenReturn(ModelFactory.fromEntityToDomain(entity))
     }
 
     @Test
     fun getForecastCompletes() {
-        val testObservable = rawWeatherRepository.getForecast("units", "apiKey").test()
-        testObservable.assertComplete()
+        val entity = ModelFactory.makeRawWeatherEntity()
+        stubRawWeatherRemoteDataSourceGetForecast(entity = entity)
+        stubRawWeatherMapperMapFromEntity(entity)
+        val testObserver = rawWeatherRepository.getForecast("metric", "apiKey").test()
+        testObserver.assertComplete()
     }
 
     @Test
-    fun getForecastReturnsData() {
-        val testObservable = rawWeatherRepository.getForecast("units", "apiKey").test()
-        testObservable.assertValue(domain)
+    fun getForecastReturnsData(){
+        val entity = ModelFactory.makeRawWeatherEntity()
+        val domain = ModelFactory.fromEntityToDomain(entity)
+        stubRawWeatherRemoteDataSourceGetForecast(entity = entity)
+        stubRawWeatherMapperMapFromEntity(entity)
+        val testObserver = rawWeatherRepository.getForecast("metric", "apiKey").test()
+        testObserver.assertValue(domain)
     }
+
 }

@@ -22,7 +22,5 @@ dependencies{
     testImplementation remoteTestDependencies.junit
     testImplementation remoteTestDependencies.androidxJunit
     testImplementation remoteTestDependencies.mockito
-    testImplementation remoteTestDependencies.mockitoDexMaker
-    testImplementation remoteTestDependencies.mockitoDexMakerInline
-    //testImplementation remoteTestDependencies.mockitoInline
+    testImplementation "org.mockito:mockito-inline:2.8.47"
 }

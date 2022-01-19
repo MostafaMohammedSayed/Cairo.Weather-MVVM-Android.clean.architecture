@@ -5,52 +5,63 @@ import com.mostafamohammed.domain.models.RawWeather
 import com.mostafamohammed.domain.usecases.checkForecast.GetForecast
 import com.mostafamohammed.presentation.base.Resource
 import com.mostafamohammed.presentation.factory.RawWeatherFactory
+import com.mostafamohammed.presentation.factory.getOrAwaitValue
 import com.mostafamohammed.presentation.mapper.RawWeatherViewMapper
 import com.mostafamohammed.presentation.model.RawWeatherView
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Observable.just
 import io.reactivex.rxjava3.observers.DisposableObserver
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
+import org.mockito.ArgumentCaptor
 import org.mockito.Captor
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.*
 import java.lang.RuntimeException
+import java.util.*
 
 @RunWith(JUnit4::class)
 class HomeViewModelTest{
 
-    @Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    var getForecast = mock<GetForecast>()
-    var mapper = mock<RawWeatherViewMapper>()
-    var params = mock<GetForecast.Params>()
-    var homeViewModel = mock<HomeViewModel>()
-    var observer = mock<DisposableObserver<RawWeather>>()
+    @get:Rule var instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    private lateinit var homeViewModel: HomeViewModel
+    @Mock private lateinit var getForecast: GetForecast
+    @Mock private lateinit var mapper: RawWeatherViewMapper
+    private val params = GetForecast.Params("metric","apiKey")
     @Captor
-    val captor = argumentCaptor<DisposableObserver<RawWeather>>()
+    lateinit var captor: ArgumentCaptor<DisposableObserver<RawWeather>>
 
+
+    @Before
+    fun setUp(){
+        MockitoAnnotations.openMocks(this)
+        homeViewModel = HomeViewModel(getForecast,mapper)
+    }
 
     @Test
     fun fetchForecastExecutesUseCase(){
-        homeViewModel.fetchForecast("metric","660a1bcf9fb3c5e90d06039601866186")
+        homeViewModel.fetchForecast(params.units,params.apiKey)
 
-        verify(getForecast, times(1)).execute(captor.firstValue,params)
+        verify(getForecast, times(1)).execute(homeViewModel.observer,params)
     }
 
     @Test
     fun fetchForecastReturnsSuccess(){
         val rawWeather = RawWeatherFactory.makeRawWeather()
-        val rawWeatherView = mapper.mapToView(rawWeather)
+        val rawWeatherView = RawWeatherFactory.makeRawWeatherView()
 
         stubRawWeatherViewMapperMapToView(rawWeatherView,rawWeather)
-        homeViewModel.fetchForecast("metric","660a1bcf9fb3c5e90d06039601866186")
+        homeViewModel.fetchForecast(params.units,params.apiKey)
 
-        verify(getForecast).execute(captor.capture(),params)
-        captor.firstValue.onNext(rawWeather)
-        assertEquals(Resource.success(rawWeather),homeViewModel.getForecast().value?.state)
+        verify(getForecast).execute(homeViewModel.observer,params)
+        assertEquals(Resource.success(rawWeatherView).state,homeViewModel.getForecast().getOrAwaitValue().state)
     }
 
     private fun stubRawWeatherViewMapperMapToView(rawWeatherView: RawWeatherView,
@@ -59,31 +70,4 @@ class HomeViewModelTest{
             .thenReturn(rawWeatherView)
     }
 
-    @Test
-    fun fetForecastReturnsData(){
-        val rawWeather = RawWeatherFactory.makeRawWeather()
-        val rawWeatherView = mapper.mapToView(rawWeather)
-
-        stubRawWeatherViewMapperMapToView(rawWeatherView,rawWeather)
-
-        homeViewModel.fetchForecast("metric","660a1bcf9fb3c5e90d06039601866186")
-
-        verify(getForecast).execute(captor.capture(),params)
-        captor.firstValue.onNext(rawWeather)
-        assertEquals(Resource.success(rawWeatherView),homeViewModel.getForecast().value?.value)
-    }
-
-    @Test
-    fun fetchForecastReturnsError(){
-        val rawWeather = RawWeatherFactory.makeRawWeather()
-        val rawWeatherView = mapper.mapToView(rawWeather)
-
-        stubRawWeatherViewMapperMapToView(rawWeatherView,rawWeather)
-
-        homeViewModel.fetchForecast("metric","660a1bcf9fb3c5e90d06039601866186")
-
-        verify(getForecast).execute(captor.capture(),params)
-        captor.firstValue.onError(RuntimeException())
-        assertEquals(Resource(null, Throwable(),Resource.State.ERROR),homeViewModel.getForecast().value?.state)
-    }
 }

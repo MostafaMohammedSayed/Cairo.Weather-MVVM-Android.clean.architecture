@@ -63,4 +63,24 @@ object ModelFactory {
             pressure = DataFactory.randomDouble()
         )
     }
+
+    fun fromEntityToDomain(entity: RawWeatherEntity): RawWeather{
+        return RawWeather(
+            timedForecasts = entity.timedForecasts.map { timedForecastEntity ->
+                fromTimedForecastEntityToTimedForecastDomain(timedForecastEntity)
+            }
+            )
+    }
+
+    private fun fromTimedForecastEntityToTimedForecastDomain(timedForecastEntity: TimedForecastEntity): TimedForecast {
+        return TimedForecast(
+            attrs = ForecastAttributes(
+                temp = timedForecastEntity.attrs.temp,
+                tempMin = timedForecastEntity.attrs.tempMin,
+                tempMax = timedForecastEntity.attrs.tempMax,
+                pressure = timedForecastEntity.attrs.pressure
+            ),
+            date = timedForecastEntity.date
+        )
+    }
 }
